@@ -1,0 +1,68 @@
+# ctvlm — docker-compose
+#
+# First-run flow:
+#   1. cp .env.example .env  → fill in HF_TOKEN (one-time)
+#   2. docker compose up viewer
+#      → on first launch, container downloads ~1.5 GB of encoder weights from
+#        HuggingFace into ./hf_cache (persisted via the volume mount)
+#      → subsequent launches: instant
+#
+# Services:
+#   viewer  Streamlit + NiiVue file server (http://localhost:8501)
+#   worker  GPU inference worker; stub broker integration in deploy/example_worker.py
+
+version: "3.9"
+
+x-shared-env: &shared-env
+  CTVLM_WORK_ROOT: /opt/ctvlm/work
+  CTVLM_CHECKPOINTS_DIR: /opt/ctvlm/checkpoints
+  CTVLM_HF_CACHE: /opt/ctvlm/hf_cache
+  HF_HOME: /opt/ctvlm/hf_cache
+  HF_HUB_DISABLE_TELEMETRY: "1"
+  HF_TOKEN: ${HF_TOKEN}                # ← pulled from your .env file
+  PYTHONUNBUFFERED: "1"
+
+x-shared-volumes: &shared-volumes
+  - ./work:/opt/ctvlm/work             # CT NIfTI, features, heatmaps, agent cache
+  - ./hf_cache:/opt/ctvlm/hf_cache     # encoder weights (persisted across restarts)
+  - ./checkpoints:/opt/ctvlm/checkpoints   # probe checkpoint (read-only)
+
+services:
+  viewer:
+    build:
+      context: .
+      target: viewer
+    image: ctvlm-viewer:0.2.0
+    ports:
+      - "8501:8501"     # Streamlit dashboard
+      - "8502:8502"     # File server (NIfTI / heatmap streaming + NiiVue viewer page)
+    volumes: *shared-volumes
+    environment:
+      <<: *shared-env
+    # Enable GPU if you want lazy Grad-CAM regeneration from inside the viewer.
+    # For browse-only (just looking at probabilities + cached heatmaps), CPU is fine.
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - capabilities: ["gpu"]
+    restart: unless-stopped
+
+  worker:
+    build:
+      context: .
+      target: worker
+    image: ctvlm-worker:0.2.0
+    volumes: *shared-volumes
+    environment:
+      <<: *shared-env
+      # CTVLM_REDIS_URL: redis://broker:6379/0
+      # CTVLM_BROKER_QUEUE: ctvlm.jobs
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - capabilities: ["gpu"]
+    restart: unless-stopped
+    stdin_open: true
+    tty: true

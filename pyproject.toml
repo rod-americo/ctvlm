@@ -1,0 +1,73 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "ctvlm"
+version = "0.2.0"
+description = "CT body VLM — agentic radiology report generator over Merlin + Pillar-0 encoders"
+requires-python = ">=3.11"
+readme = "README.md"
+authors = [{ name = "ctvlm" }]
+license = { text = "Research use only — see docs/11_LIMITATIONS.md" }
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Intended Audience :: Healthcare Industry",
+    "Topic :: Scientific/Engineering :: Medical Science Apps.",
+    "Operating System :: POSIX :: Linux",
+]
+
+# Production inference stack. Wheel sizes large; install on the GPU worker only.
+# See docs/02_INSTALLATION.md for system requirements (CUDA 12.4, 24 GB GPU
+# recommended for combined Merlin + Pillar-0 + Grad-CAM).
+dependencies = [
+    "torch>=2.4,<3",                # CUDA 12.4 build; pin to your CUDA tag
+    "transformers>=5.0,<6",         # 5.x required for Pillar-0 trust_remote_code
+    "peft>=0.18",                   # optional — only for LoRA finetune scripts
+    "nibabel>=5.2",
+    "numpy>=1.26,<3",
+    "pandas>=2.1",
+    "scipy>=1.13",
+    "scikit-learn>=1.4",            # Platt scaling + Youden-J
+    "timm>=1.0",                    # Pillar-0 backbone
+    "pyyaml>=6",
+    "huggingface-hub>=0.24",
+    "tqdm",
+]
+
+[project.optional-dependencies]
+# Set if you want the LLM prose layer. Production agentic path DOES NOT need
+# this — see docs/01_OVERVIEW.md, "Template-only output is the default".
+llm = [
+    "bitsandbytes>=0.43",
+]
+
+# Pulled in only on the offline retraining box, not the production worker.
+training = [
+    "torch>=2.4,<3",
+    "openpyxl",                     # reading the Merlin reports XLSX
+]
+
+# Tools, lint, tests.
+dev = [
+    "pytest",
+    "ruff",
+    "ipykernel",
+]
+
+[project.scripts]
+ctvlm-report = "src.agent.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["src*"]
+
+[tool.setuptools.package-data]
+"src" = ["**/*.csv", "**/*.yaml", "**/*.json"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

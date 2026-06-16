@@ -1,0 +1,27 @@
+__pycache__/
+*.pyc
+*.pyo
+*.egg-info/
+*.egg
+.eggs/
+build/
+dist/
+.venv/
+.env
+
+# Runtime artefacts the worker / viewer create
+work/
+hf_cache/
+logs/
+reports_out/
+*.log
+
+# Editor / OS
+.vscode/
+.idea/
+.DS_Store
+
+# Test artefacts
+.pytest_cache/
+.coverage
+htmlcov/

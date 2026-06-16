@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>ctvlm — agentic CT abdomen-pelvis report generator</title>
+<meta name="description" content="Deterministic, auditable radiology report generator. 220 RATE findings, dual-encoder (Merlin + Pillar-0) linear probe with Platt + Youden-J calibration." />
+<style>
+  :root {
+    --c-bg: #fafbfc;
+    --c-fg: #0f172a;
+    --c-muted: #64748b;
+    --c-accent: #3b82f6;
+    --c-accent-dark: #1e3a8a;
+    --c-card: #fff;
+    --c-border: #e2e8f0;
+    --c-success: #166534;
+    --c-success-bg: #dcfce7;
+    --c-warn-bg: #fef3c7;
+    --c-warn: #92400e;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+                 "Helvetica Neue", Arial, sans-serif;
+    color: var(--c-fg);
+    background: var(--c-bg);
+    line-height: 1.55;
+  }
+  a { color: var(--c-accent); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+  code, kbd, pre { font-family: ui-monospace, SFMono-Regular, "SF Mono",
+                                 Menlo, Consolas, monospace; }
+  .container { max-width: 1100px; margin: 0 auto; padding: 0 24px; }
+
+  /* hero */
+  .hero {
+    background: linear-gradient(135deg, var(--c-accent-dark) 0%, var(--c-accent) 100%);
+    color: white; padding: 5rem 0 4.5rem;
+  }
+  .hero h1 {
+    font-size: 3rem; margin: 0 0 0.5rem; line-height: 1.1;
+    letter-spacing: -0.02em;
+  }
+  .hero .tag { font-size: 1.25rem; color: #dbeafe; margin: 0 0 2rem; max-width: 760px; }
+  .hero .ctas { display: flex; gap: 12px; flex-wrap: wrap; }
+  .btn {
+    display: inline-block; padding: 12px 22px; border-radius: 8px;
+    font-weight: 600; font-size: 1rem;
+  }
+  .btn-primary { background: white; color: var(--c-accent-dark); }
+  .btn-primary:hover { background: #f1f5f9; text-decoration: none; }
+  .btn-secondary {
+    background: transparent; color: white; border: 2px solid rgba(255,255,255,0.5);
+  }
+  .btn-secondary:hover { border-color: white; text-decoration: none; }
+
+  /* sections */
+  section { padding: 4rem 0; }
+  h2 { font-size: 1.8rem; margin: 0 0 1.5rem; letter-spacing: -0.01em; }
+  h3 { font-size: 1.15rem; margin: 1.2rem 0 0.4rem; }
+
+  /* metrics row */
+  .metrics { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 16px; margin-bottom: 1rem; }
+  .metric {
+    background: var(--c-card); border: 1px solid var(--c-border); border-radius: 10px;
+    padding: 18px 20px;
+  }
+  .metric .v { font-size: 2rem; font-weight: 700; color: var(--c-accent-dark); }
+  .metric .l { color: var(--c-muted); font-size: 0.9rem; margin-top: 2px; }
+
+  /* feature grid */
+  .grid { display: grid; gap: 18px; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); }
+  .card {
+    background: var(--c-card); border: 1px solid var(--c-border); border-radius: 10px;
+    padding: 22px;
+  }
+  .card h3 { margin-top: 0; }
+  .card p { color: var(--c-muted); margin-bottom: 0; font-size: 0.95rem; }
+  .card .icon { font-size: 1.8rem; margin-bottom: 6px; }
+
+  /* code block */
+  pre {
+    background: #0f172a; color: #e2e8f0; padding: 18px 22px;
+    border-radius: 10px; overflow-x: auto; font-size: 0.92rem; line-height: 1.6;
+  }
+  pre .c { color: #64748b; }
+  pre .k { color: #93c5fd; }
+
+  /* table */
+  table { border-collapse: collapse; width: 100%; }
+  th, td { text-align: left; padding: 10px 14px; border-bottom: 1px solid var(--c-border); }
+  th { background: #f1f5f9; font-weight: 600; }
+  td.r { text-align: right; font-variant-numeric: tabular-nums; }
+
+  /* alert */
+  .alert {
+    background: var(--c-warn-bg); color: var(--c-warn);
+    padding: 14px 18px; border-radius: 8px; margin: 1.5rem 0;
+    border-left: 4px solid var(--c-warn);
+  }
+
+  /* footer */
+  footer {
+    background: #0f172a; color: #94a3b8; padding: 2.5rem 0;
+    text-align: center; font-size: 0.9rem;
+  }
+  footer a { color: #cbd5e1; }
+</style>
+</head>
+<body>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="container">
+    <h1>🫁 ctvlm</h1>
+    <p class="tag">
+      Agentic radiology report generator for <strong>CT abdomen-pelvis</strong>.
+      Deterministic, auditable, template-only structured findings — every sentence
+      traceable to a tool result and Grad-CAM heatmap.
+    </p>
+    <div class="ctas">
+      <a class="btn btn-primary" href="https://github.com/&lt;owner&gt;/ctvlm">View on GitHub →</a>
+      <a class="btn btn-secondary" href="#quickstart">Quick start</a>
+      <a class="btn btn-secondary" href="https://github.com/&lt;owner&gt;/ctvlm/blob/main/docs/01_OVERVIEW.md">Docs</a>
+    </div>
+  </div>
+</section>
+
+<!-- METRICS -->
+<section style="padding-top: 2rem; padding-bottom: 1rem;">
+  <div class="container">
+    <div class="metrics">
+      <div class="metric"><div class="v">220</div><div class="l">RATE findings predicted</div></div>
+      <div class="metric"><div class="v">0.529</div><div class="l">Micro F1 (val, contrast-enhanced)</div></div>
+      <div class="metric"><div class="v">25,414</div><div class="l">Training studies</div></div>
+      <div class="metric"><div class="v">~5 s</div><div class="l">Cold latency / 24 GB GPU</div></div>
+      <div class="metric"><div class="v">MIT</div><div class="l">License</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURES -->
+<section>
+  <div class="container">
+    <h2>What it does</h2>
+    <div class="grid">
+      <div class="card">
+        <div class="icon">🧪</div><h3>Dual-encoder concat</h3>
+        <p>L2-normalised concatenation of Merlin (2048-d) + Pillar-0 (1152-d) into a
+           3200-d feature, linear probe to 220 findings.</p>
+      </div>
+      <div class="card">
+        <div class="icon">📐</div><h3>Calibrated probabilities</h3>
+        <p>Per-finding Platt scaling + Youden-J operating points + universal min-floor.
+           Contrast-phase-aware on 26 high-prevalence findings.</p>
+      </div>
+      <div class="card">
+        <div class="icon">🩻</div><h3>Auditable sentences</h3>
+        <p>Every positive finding maps to a tool-call recipe → measurement-bearing
+           Tier A template or organ-anchored Tier B generic. No LLM in the production path.</p>
+      </div>
+      <div class="card">
+        <div class="icon">🎯</div><h3>Grad-CAM by finding</h3>
+        <p>Per-encoder Grad-CAM heatmaps via the concat probe's weight slots.
+           NIfTI output, displayable in NiiVue side-by-side.</p>
+      </div>
+      <div class="card">
+        <div class="icon">🌐</div><h3>Web viewer + DICOM upload</h3>
+        <p>Streamlit dashboard with file-server sidecar. Browse pre-cached demos
+           or drop in your own DICOM series.</p>
+      </div>
+      <div class="card">
+        <div class="icon">🐳</div><h3>Production-ready Docker</h3>
+        <p>Multi-stage build. Encoder weights auto-download on first launch with
+           your HF token. Volume-mounted cache persists across restarts.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- QUICK START -->
+<section id="quickstart" style="background: white;">
+  <div class="container">
+    <h2>Quick start</h2>
+    <p>Two steps after cloning the repo:</p>
+    <pre><span class="c"># 1. Give the container your HuggingFace token</span>
+cp .env.example .env
+<span class="c"># → edit .env, set HF_TOKEN=hf_... after accepting Merlin + Pillar-0 gates</span>
+
+<span class="c"># 2. Launch the viewer</span>
+docker compose up viewer
+<span class="c"># → first launch downloads ~1.5 GB of encoder weights (one-time)</span>
+<span class="c"># → open http://localhost:8501</span></pre>
+
+    <p>Or use the Python API directly:</p>
+    <pre><span class="k">from</span> src.agent <span class="k">import</span> pipeline
+report = pipeline.generate_report(<span class="c">"AC421363f"</span>, skip_llm=<span class="k">True</span>, contrast_phase=<span class="c">"ce"</span>)
+<span class="k">print</span>(report.summary_text)</pre>
+  </div>
+</section>
+
+<!-- DATA -->
+<section>
+  <div class="container">
+    <h2>Getting the data</h2>
+    <p>The repo bundles:</p>
+    <ul>
+      <li><strong>RATE labels</strong> — 25,494 studies × 230 binary finding columns</li>
+      <li><strong>Source radiology reports</strong> — the original report text (55 MB CSV)</li>
+      <li><strong>Trained probe checkpoint</strong> — concat probe with Platt + Youden-J + NC calibration</li>
+      <li><strong>10 demo studies</strong> — pre-cached encoder features for instant browsing</li>
+    </ul>
+    <p>The CT volumes themselves are <em>not</em> bundled. Download separately:</p>
+
+    <table>
+      <thead><tr>
+        <th>Asset</th><th>Source</th><th>Notes</th>
+      </tr></thead>
+      <tbody>
+        <tr>
+          <td>Merlin Abdominal CT dataset (volumes)</td>
+          <td><a href="https://huggingface.co/datasets/stanfordmimi/Merlin">stanfordmimi/Merlin</a> on HF Datasets</td>
+          <td>Gated, accept terms</td>
+        </tr>
+        <tr>
+          <td>Stanford AIMI dataset portal</td>
+          <td><a href="https://aimi.stanford.edu/shared-datasets">aimi.stanford.edu</a></td>
+          <td>Alternative download / mirror</td>
+        </tr>
+        <tr>
+          <td>Azure Open Datasets — Medical Imaging</td>
+          <td><a href="https://learn.microsoft.com/en-us/azure/open-datasets/dataset-medical-imaging">Microsoft Learn</a></td>
+          <td>Azure-hosted mirrors of common medical datasets</td>
+        </tr>
+        <tr>
+          <td>Merlin encoder weights</td>
+          <td><a href="https://huggingface.co/stanfordmimi/Merlin">stanfordmimi/Merlin</a></td>
+          <td>Auto-downloaded by Docker on first launch</td>
+        </tr>
+        <tr>
+          <td>Pillar-0 encoder weights</td>
+          <td><a href="https://huggingface.co/YalaLab/Pillar0-AbdomenCT">YalaLab/Pillar0-AbdomenCT</a></td>
+          <td>Auto-downloaded by Docker on first launch</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- ARCHITECTURE -->
+<section style="background: white;">
+  <div class="container">
+    <h2>Architecture</h2>
+    <pre>DICOM ─► canonical-RAS NIfTI ─► ┌──────────────┐  L2 ┌──────────┐
+                               │  Merlin 2048 │────►│          │
+                               └──────────────┘     │  3200-d  │ Linear  220
+                               ┌──────────────┐  L2 │  concat  │────────►raw
+                               │ Pillar-0 1152│────►│          │ probe   logits
+                               └──────────────┘     └──────────┘
+                                                          │
+                                                          ▼
+                                            Platt + Youden-J + min-floor
+                                            COREQUIRES + SUBSUMPTION + cap
+                                                          │
+                                                          ▼
+                                              Tier A/B template render
+                                              + per-encoder Grad-CAM NIfTI
+                                                          │
+                                                          ▼
+                                              Structured FINDINGS block</pre>
+
+    <p><a href="https://github.com/&lt;owner&gt;/ctvlm/blob/main/docs/01_OVERVIEW.md">→ Full architecture in docs/01_OVERVIEW.md</a></p>
+  </div>
+</section>
+
+<!-- LIMITATIONS -->
+<section>
+  <div class="container">
+    <h2>Limitations</h2>
+    <div class="alert">
+      <strong>⚠️ Research use only.</strong> This is NOT FDA-cleared / NOT CE-marked.
+      Do not use as a sole basis for clinical decisions. The output is intended as a
+      draft / triage / quality-check input to a qualified radiologist.
+    </div>
+    <ul>
+      <li>Trained on a single-institution US tertiary-care cohort (Merlin); external validity unverified</li>
+      <li>~99% of training data is contrast-enhanced — non-contrast performance is measurably degraded (F1 0.510 vs 0.529)</li>
+      <li>Abdomen-pelvis only — do not route chest CT through this pipeline</li>
+      <li>Adult cohort — pediatric performance untested</li>
+    </ul>
+    <p><a href="https://github.com/&lt;owner&gt;/ctvlm/blob/main/docs/11_LIMITATIONS.md">→ Full limitations + known FP/FN patterns</a></p>
+  </div>
+</section>
+
+<!-- CITE -->
+<section style="background: white;">
+  <div class="container">
+    <h2>Citing</h2>
+    <pre>@misc{ctvlm2026,
+  title  = {ctvlm: Agentic Radiology Report Generation for CT Abdomen-Pelvis},
+  year   = {2026},
+  url    = {https://github.com/&lt;owner&gt;/ctvlm},
+  note   = {Built on stanfordmimi/Merlin and YalaLab/Pillar0-AbdomenCT encoders}
+}</pre>
+  </div>
+</section>
+
+<footer>
+  <div class="container">
+    <p>
+      MIT licensed code. Third-party assets under their own licenses (see
+      <a href="https://github.com/&lt;owner&gt;/ctvlm/blob/main/LICENSE">LICENSE</a>).
+      Built on <a href="https://huggingface.co/stanfordmimi/Merlin">Merlin</a> +
+      <a href="https://huggingface.co/YalaLab/Pillar0-AbdomenCT">Pillar-0</a>.
+    </p>
+  </div>
+</footer>
+
+</body>
+</html>

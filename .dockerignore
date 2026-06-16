@@ -1,0 +1,30 @@
+# Reduce build context to the essentials. Anything matched here is NOT sent to the
+# Docker daemon and NOT copied into image layers.
+
+.git/
+.github/
+*.md.bak
+__pycache__/
+*.pyc
+*.pyo
+*.egg-info/
+*.egg
+build/
+dist/
+.venv/
+
+# Runtime artefacts that should be mounted as volumes, not baked in
+work/
+hf_cache/
+logs/
+reports_out/
+
+# Tests + dev tooling (keep `tests/` because the Dockerfile runs them in CI; remove
+# this line if your CI doesn't need them inside the image)
+# tests/
+
+# Editor / OS metadata
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db

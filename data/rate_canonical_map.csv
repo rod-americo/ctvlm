@@ -1,0 +1,226 @@
+question,canonical,organ_category
+Is there pancreatic atrophy?,pancreatic_atrophy,Pancreas
+Is chronic pancreatitis suspected based on imaging findings?,chronic_pancreatitis,Pancreas
+Is there acute pancreatitis?,acute_pancreatitis,Pancreas
+Is there necrotizing pancreatitis?,necrotizing_pancreatitis,Pancreas
+Is there autoimmune pancreatitis?,autoimmune_pancreatitis,Pancreas
+Is there groove pancreatitis?,groove_pancreatitis,Pancreas
+Is there any pancreatic pseudocysts?,pancreatic_pseudocyst,Pancreas
+Are there any pancreatic tumors?,pancreatic_tumor,Pancreas
+Are there any intraductal papillary mucinous neoplasms (IPMN)?,intraductal_papillary_mucinous_neoplasm,Pancreas
+Are there any intraductal papillary mucinous neoplasms with worrisome features?,intraductal_papillary_mucinous_neoplasm,Pancreas
+Are there any serous cystic neoplasms?,serous_cystic_neoplasm,Pancreas
+Are there any mucinous cystic neoplasms?,mucinous_cystic_neoplasm,Pancreas
+Are there any solid pseudopapillary tumors?,solid_pseudopapillary_tumor,Pancreas
+Are there any ductal pancreatic carcinomas?,ductal_pancreatic_carcinoma,Pancreas
+Are there any neuroendocrine tumors?,neuroendocrine_tumor,Pancreas
+Is there main pancreatic duct dilatation?,pancreatic_duct_dilatation,Pancreas
+Is there an annular pancreas?,annular_pancreas,Pancreas
+Is cystic fibrosis suspected based on the pancreatic imaging findings?,cystic_fibrosis,Pancreas
+Is there splenomegaly?,splenomegaly,Spleen
+Are there any epithelial cysts?,epithelial_cyst,Spleen
+Are there any splenic pseudocysts?,splenic_pseudocyst,Spleen
+Are there any splenic hamartomas?,splenic_hamartoma,Spleen
+Is splenic lymphoma present?,splenic_lymphoma,Spleen
+Are there any splenic abscesses?,splenic_abscess,Spleen
+Are there any splenic lacerations?,splenic_laceration,Spleen
+Are there any splenic infarcts?,splenic_infarct,Spleen
+Is the spleen surgically absent? Are there any post-splenectomy changes?,spleen_absent,Spleen
+Are there any accessory spleens?,accessory_spleen,Spleen
+Is there any intrahepatic biliary ductal dilation?,intrahepatic_biliary_ductal_dilation,Biliary Tree
+is there any extrahepatic biliary ductal dilation?,extrahepatic_biliary_ductal_dilation,Biliary Tree
+Are there any intra-hepatic stones?,intra_hepatic_stone,Biliary Tree
+Is there ascending cholangitis?,ascending_cholangitis,Biliary Tree
+Is there primary sclerosing cholangitis?,primary_sclerosing_cholangitis,Biliary Tree
+Is there periductal/intraductal cholangiocarcinoma?,cholangiocarcinoma,Biliary Tree
+Are there any biliary cystadenomas?,biliary_cystadenoma,Biliary Tree
+Are there any biliary hamartomas?,biliary_hamartoma,Biliary Tree
+Is there hepatomegaly?,hepatomegaly,Liver
+"Is hepatic steatosis, fatty liver, focal fatty infiltration suspected based on the imaging findings?",hepatic_steatosis,Liver
+Is there cirrhosis?,cirrhosis,Liver
+Is there cirrhosis with portal hypertension?,cirrhosis_with_portal_hypertension,Liver
+Is there cirrhosis with decompensation?,cirrhosis_decompensation,Liver
+Are there any esophageal or gastric varices?,esophageal_varices,Liver
+Are there any hepatic regenerative nodules?,hepatic_regenerative_nodule,Liver
+Are there any dysplastic nodules?,dysplastic_nodule,Liver
+Is polycystic liver disease present?,polycystic_liver_disease,Liver
+Is there viral hepatitis?,viral_hepatitis,Liver
+Are there any hepatic abscesses?,hepatic_abscess,Liver
+Is there hemochromatosis?,hemochromatosis,Liver
+Are there any hepatic cysts?,hepatic_cyst,Liver
+Are there any hepatic hemangiomas?,hepatic_hemangioma,Liver
+Are there any hepatic focal nodular hyperplasias?,hepatic_focal_nodular_hyperplasia,Liver
+Are there any hepatic adenomas?,hepatic_adenoma,Liver
+Are there any hepatic masses?,hepatic_mass,Liver
+Is there hepatocellular carcinoma?,hepatocellular_carcinoma,Liver
+Is there hepatoblastoma?,hepatoblastoma,Liver
+Is there cholangiocarcinoma?,cholangiocarcinoma,Liver
+Are there any hepatic metastases?,hepatic_metastases,Liver
+Is there hepatic lymphoma?,hepatic_lymphoma,Liver
+Is there angiosarcoma?,angiosarcoma,Liver
+Is there epithelioid hemangioendothelioma?,epithelioid_hemangioendothelioma,Liver
+Is there fibrolamellar carcinoma?,fibrolamellar_carcinoma,Liver
+Are there any liver lacerations?,liver_laceration,Liver
+Are there any sites of active extravasation in the liver?,active_extravasation_liver,Liver
+Are there any hepatic infarcts?,hepatic_infarct,Liver
+Are there any hepatic changes post-resection?,hepatic_changes,Liver
+Are there any hepatic changes post-transplantation?,hepatic_changes_post_transplantation,Liver
+Is there portal venous occlusion?,portal_venous_occlusion,Liver
+Is there any portal venous gas?,portal_venous_gas,Liver
+Are there any gallbladder stones or cholelithiasis?,gallbladder_stones,Gallbladder
+Is the gallbladder surgically absent?,gallbladder_absent,Gallbladder
+Are there any choledochal cysts?,choledochal_cyst,Gallbladder
+Is there acute cholecystitis?,acute_cholecystitis,Gallbladder
+Is there acute cholecystitis with rupture?,acute_cholecystitis,Gallbladder
+Is there emphysematous cholecystitis?,emphysematous_cholecystitis,Gallbladder
+Is there porcelain gallbladder?,porcelain_gallbladder,Gallbladder
+Is there pneumobilia?,pneumobilia,Gallbladder
+Is there gallbladder wall thickening?,gallbladder_wall_thickening,Gallbladder
+Is there gallbladder adenomyomatosis?,gallbladder_adenomyomatosis,Gallbladder
+Are there any gallbladder polyps?,gallbladder_polyp,Gallbladder
+Is there gallbladder cancer?,gallbladder_cancer,Gallbladder
+Is there hydronephrosis?,hydronephrosis,Genitourinary
+Are there any renal hypodensities?,renal_hypodensity,Genitourinary
+Are there any simple renal cysts?,simple_renal_cyst,Genitourinary
+Are there any complex renal cysts?,complex_renal_cyst,Genitourinary
+Is there nephritis?,nephritis,Genitourinary
+Are there any renal abscesses?,renal_abscess,Genitourinary
+Is there xanthogranulomatous pyelonephritis?,xanthogranulomatous_pyelonephritis,Genitourinary
+Are there any renal stones / nephrolithiasis?,renal_stones,Genitourinary
+Are there any ureteral stones?,ureteral_stone,Genitourinary
+Are there any bladder stones?,bladder_stone,Genitourinary
+Is there nephrocalcinosis?,nephrocalcinosis,Genitourinary
+Is there polycystic kidney disease?,polycystic_kidney_disease,Genitourinary
+Is there horseshoe kidney?,horseshoe_kidney,Genitourinary
+Are there any ureteroceles?,ureterocele,Genitourinary
+Are there any urachal diverticula?,urachal_diverticulum,Genitourinary
+Are there any renal cell carcinomas?,renal_cell_carcinoma,Genitourinary
+Are there any oncocytomas?,oncocytoma,Genitourinary
+Is there renal lymphomas?,renal_lymphoma,Genitourinary
+Are there any Wilms tumors?,wilms_tumor,Genitourinary
+Are there any angiomyolipomas?,angiomyolipoma,Genitourinary
+Are there any bladder transitional cell carcinomas?,bladder_transitional_cell_carcinoma,Genitourinary
+Are there any post-nephrectomy changes?,post_nephrectomy_changes,Genitourinary
+Are there any post-renal transplantation changes?,post_renal_transplantation_changes,Genitourinary
+Are there any subcapsular hemorrhages?,subcapsular_hemorrhage,Genitourinary
+Are there any renal lacerations?,renal_laceration,Genitourinary
+Are there any renal infarcts?,renal_infarct,Genitourinary
+Is there bladder rupture?,bladder_rupture,Genitourinary
+Are there any adrenal masses?,adrenal_mass,Adrenal gland
+Are there any adrenal adenomas?,adrenal_adenoma,Adrenal gland
+Are there any pheochromocytomas?,pheochromocytoma,Adrenal gland
+Are there any adrenal myelolipomas?,adrenal_myelolipoma,Adrenal gland
+Is there adrenal hyperplasia?,adrenal_hyperplasia,Adrenal gland
+Are there any adrenal hemorrhages?,adrenal_hemorrhage,Adrenal gland
+Are there any adrenal infarcts?,adrenal_infarct,Adrenal gland
+Is appendicitis suspected based on the imaging findings?,appendicitis,Gastrointestinal
+"Is there submucosal edema, enterocolitis, or gastritis?",submucosal_edema,Gastrointestinal
+Is bowel obstruction present?,bowel_obstruction,Gastrointestinal
+Is hiatal hernia present?,hiatal_hernia,Gastrointestinal
+Is there pneumatosis intestinalis?,pneumatosis_intestinalis,Gastrointestinal
+Is there inflammatory bowel disease?,inflammatory_bowel_disease,Gastrointestinal
+Is there pseudomembranous colitis?,pseudomembranous_colitis,Gastrointestinal
+Is there diverticulitis?,diverticulitis,Gastrointestinal
+Is there bowel obstruction?,bowel_obstruction,Gastrointestinal
+Is there small bowel obstruction?,small_bowel_obstruction,Gastrointestinal
+Is there ileus?,ileus,Gastrointestinal
+Is there volvulus?,volvulus,Gastrointestinal
+Is there large bowel obstruction?,large_bowel_obstruction,Gastrointestinal
+Is there hiatal hernia?,hiatal_hernia,Gastrointestinal
+Is there intussusception?,intussusception,Gastrointestinal
+Are there any enteric duplication cysts?,enteric_duplication_cyst,Gastrointestinal
+Is there achalasia or scleroderma suspected based on gastrointestinal imaging findings?,achalasia,Gastrointestinal
+Are there any enteric diverticula?,enteric_diverticula,Gastrointestinal
+Is there gastric volvulus?,gastric_volvulus,Gastrointestinal
+Are there any inguinal hernias?,inguinal_hernia,Gastrointestinal
+Are there any femoral/ventral/Spigelian hernias?,femoral_hernia,Gastrointestinal
+Is there evidence of sleeve gastrectomy or fundoplication?,sleeve_gastrectomy,Gastrointestinal
+Is there a surgical gastric conduit?,surgical_gastric_conduit,Gastrointestinal
+Are there any gastric foreign bodies (not related to medical devices or post-surgical changes)?,gastric_foreign_body,Gastrointestinal
+Is there any evidence of enteric contrast leak suggestive of postoperative leakage/fistula after surgery?,enteric_contrast_leak,Gastrointestinal
+Are there any gastric carcinomas?,gastric_carcinoma,Gastrointestinal
+Are there any esophageal carcinomas?,esophageal_carcinoma,Gastrointestinal
+Are there any duodenal carcinomas?,duodenal_carcinoma,Gastrointestinal
+Are there any colonic carcinomas?,colonic_carcinoma,Gastrointestinal
+Are there any rectal carcinomas?,rectal_carcinoma,Gastrointestinal
+Are there any gastrointestinal stromal tumors (GISTs)?,gastrointestinal_stromal_tumor,Gastrointestinal
+Is there gastrointestinal lymphoma?,gastrointestinal_lymphoma,Gastrointestinal
+Are there any nasogastric tubes?,nasogastric_tube,Device
+Are there any gastrostomy tubes?,gastrostomy_tube,Device
+Are there any drainage catheters?,drainage_catheter,Device
+Are there any biliary stents?,biliary_stent,Device
+Are there any transjugular intrahepatic portosystemic shunts?,transjugular_intrahepatic_portosystemic_shunt,Device
+Are there any Foley catheters?,foley_catheter,Device
+Are there any percutaneous nephrostomy tubes/catheters?,percutaneous_nephrostomy_catheter,Device
+Are there any ureteral double-J catheters/stents?,ureteral_double_j_catheter,Device
+Are there any intra-uterine devices?,intra_uterine_device,Device
+Are there any extracorporeal membrane oxygenation (ECMO) devices?,extracorporeal_membrane_oxygenation_device,Device
+Are there any central venous catheters?,central_venous_catheter,Device
+Are there any aortic stents?,aortic_stent,Device
+Is there any ascites?,ascites,Peritoneum
+Is there any free air or pneumoperitoneum?,free_air,Peritoneum
+Is there pseudomyxoma peritonei?,pseudomyxoma_peritonei,Peritoneum
+Is there peritoneal carcinomatosis or omental caking?,peritoneal_carcinomatosis,Peritoneum
+Is there mesenteric carcinoid tumor?,mesenteric_carcinoid_tumor,Peritoneum
+Is abdominal aortic aneurysm suspected based on the imaging findings?,abdominal_aortic_aneurysm,Great Vessel
+Is arterial or aortic thrombosis suspected based on the imaging findings?,arterial_thrombosis,Great Vessel
+Is aortic atherosclerosis suspected based on the imaging findings?,aortic_atherosclerosis,Great Vessel
+Are there any deep venous thromboses?,deep_venous_thrombosis,Great Vessel
+Are there any aortic dissections?,aortic_dissection,Great Vessel
+Are there any aortic intramural hematomas?,aortic_intramural_hematoma,Great Vessel
+Are there any penetrating atherosclerotic aortic ulcers?,penetrating_atherosclerotic_aortic_ulcer,Great Vessel
+"Is there any lymphadenopathy in retroperitoneum, peritoneum or pelvis?",lymphadenopathy,Retroperitoneum
+Is there retroperitoneal fibrosis?,retroperitoneal_fibrosis,Retroperitoneum
+Is there retroperitoneal hemorrhage or retroperitoneal hematomas?,retroperitoneal_hemorrhage,Retroperitoneum
+Is there retroperitoneal liposarcoma?,retroperitoneal_liposarcoma,Retroperitoneum
+Is metastatic disease suspected based on the imaging findings?,metastatic_disease,Multi Organs
+Is anasarca suspected based on the imaging findings?,anasarca,Multi Organs
+Is there prostatomegaly or prostatic hyperplasia?,prostatomegaly,Male Pelvis
+Is there prostatitis?,prostatitis,Male Pelvis
+Is there prostate cancer?,prostate_cancer,Male Pelvis
+Is there testicular torsion?,testicular_torsion,Male Pelvis
+Are there any testicular masses?,testicular_mass,Male Pelvis
+Is there testicular (segmental) infarct?,testicular_infarct,Male Pelvis
+Are there any scrotal hematomas?,scrotal_hematoma,Male Pelvis
+Is there epididymitis?,epididymitis,Male Pelvis
+Are there any hydroceles?,hydrocele,Male Pelvis
+Are there any varicoceles?,varicocele,Male Pelvis
+Are there any leiomyomas?,leiomyoma,Female pelvis
+Are there any leiomyosarcomas?,leiomyosarcoma,Female pelvis
+Is there any adenomyosis?,adenomyosis,Female pelvis
+Is there endometrial thickening?,endometrial_thickening,Female pelvis
+Are there any endometrial polyps?,endometrial_polyp,Female pelvis
+Are there any uterine malformations?,uterine_malformation,Female pelvis
+Are there changes status post hysterectomy?,hysterectomy_changes,Female pelvis
+Are there any cervical masses?,cervical_mass,Female pelvis
+Are there any Nabothian cysts?,nabothian_cyst,Female pelvis
+Is there adenoma malignum?,adenoma_malignum,Female pelvis
+Are there any ovarian tumors?,ovarian_tumor,Female pelvis
+Are there any endometriomas?,endometrioma,Female pelvis
+Are there any ovarian cancers?,ovarian_cancer,Female pelvis
+Is there adnexal torsion?,adnexal_torsion,Female pelvis
+Are there any ovarian teratomas?,ovarian_teratoma,Female pelvis
+Is there polycystic ovarian syndrome?,polycystic_ovarian_syndrome,Female pelvis
+Is there deep infiltrative endometriosis?,deep_infiltrative_endometriosis,Female pelvis
+Is there pelvic inflammatory disease?,pelvic_inflammatory_disease,Female pelvis
+Are there any Bartholin gland cysts?,bartholin_gland_cyst,Female pelvis
+Are there any Gartner duct cysts?,gartner_duct_cyst,Female pelvis
+Are there any vaginal or vulvar cancers?,vaginal_cancer,Female pelvis
+Is osteopenia suspected based on the imaging findings?,osteopenia,Musculoskeletal
+Are there any fractures (general)?,fracture,Musculoskeletal
+Are there any spinal fractures?,spinal_fracture,Musculoskeletal
+Are there any fractures of the pelvic girdle or sacrum?,pelvic_girdle_fracture,Musculoskeletal
+Are there any femoral fractures?,femoral_fracture,Musculoskeletal
+Are there any rib fractures?,rib_fracture,Musculoskeletal
+Are there any osteolytic lesions?,osteolytic_lesion,Musculoskeletal
+Are there any osteosclerotic lesions?,osteosclerotic_lesion,Musculoskeletal
+Are there any iliopsoas muscle abscesses?,iliopsoas_muscle_abscess,Musculoskeletal
+Is there Fournier's gangrene / necrotizing fasciitis?,fourniers_gangrene,Musculoskeletal
+Is there any atelectasis in the visible lung?,atelectasis,Visible Thoracic
+Is there any pleural effusion?,pleural_effusion,Visible Thoracic
+Is there cardiomegaly?,cardiomegaly,Visible Thoracic
+Are there any aortic valve calcifications?,aortic_valve_calcification,Visible Thoracic
+Are there coronary artery calcifications?,coronary_artery_calcification,Visible Thoracic
+Is there any consolidation?,consolidation,Visible Thoracic
+Are there any lung masses or nodules?,lung_mass,Visible Thoracic
+Is there any coronary atherosclerosis?,coronary_atherosclerosis,Visible Thoracic

@@ -1,0 +1,22 @@
+cff-version: 1.2.0
+title: "ctvlm: Agentic Radiology Report Generator for CT Abdomen-Pelvis"
+message: "If you use this code or the bundled probe, please cite this and the underlying encoder papers."
+type: software
+authors:
+  - family-names: ctvlm contributors
+repository-code: "https://github.com/<owner>/ctvlm"
+license: MIT
+version: 0.2.0
+date-released: "2026-06-14"
+references:
+  - type: article
+    title: "Merlin: A Vision Language Foundation Model for 3D Computed Tomography"
+    authors:
+      - family-names: Bluethgen
+        given-names: Christian
+    repository: "https://huggingface.co/stanfordmimi/Merlin"
+  - type: software
+    title: "Pillar-0: YalaLab Atlas Abdomen-CT Encoder"
+    authors:
+      - family-names: YalaLab
+    repository: "https://huggingface.co/YalaLab/Pillar0-AbdomenCT"

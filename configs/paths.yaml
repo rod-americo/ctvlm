@@ -1,0 +1,38 @@
+# Default paths config. Every field can be overridden via the CTVLM_<FIELD> env
+# var — recommended in production / Docker. See docs/02_INSTALLATION.md.
+#
+# These defaults are relative to the install location and work out-of-the-box
+# for the docker-compose + smoke test path. Override for your deployment.
+
+# Where the source CT NIfTI volumes live. In Docker this is the bind-mount of
+# the host's converted-DICOM staging dir.
+merlin_root: ./work/ct_volumes
+
+# Where all generated artefacts go: encoder features, heatmaps, agent cache,
+# reports. Single root makes disk hygiene one path.
+work_root: ./work
+
+# HuggingFace cache for encoder weights.
+hf_cache: ./hf_cache
+
+# Optional research dirs (unused by the production inference path; kept for
+# offline retraining / dashboard compatibility).
+rp3d_dir: ./work/rp3d
+kg_dir: ./work/kg
+
+# Per-case organ masks (TotalSegmentator output). Tier A tools require these.
+# Layout: <merlin_plus_dir>/AC<sid>/<organ>.nii.gz
+merlin_plus_dir: ./work/organ_masks
+masks_dir: ./work/organ_masks
+
+# Cached encoder embeddings (legacy alias; production reads from work_root
+# subdirs `merlin_global/` and `pillar0_emb/`).
+embeddings_dir: ./work/embeddings
+
+# Where the linear probe lives. Default points at the repo-bundled checkpoint;
+# override CTVLM_CHECKPOINTS_DIR when you have a custom probe to load.
+checkpoints_dir: ./checkpoints
+
+# Output dirs for the worker.
+reports_dir: ./work/reports_out
+logs_dir: ./logs
