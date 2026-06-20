@@ -36,6 +36,7 @@ import torch
 import torch.nn.functional as F
 
 from src.data import merlinplus as mp
+from src.config import paths
 
 # Merlin's MONAI preprocessing constants (from merlin/data/monai_transforms.py).
 TARGET_SPACING = (1.5, 1.5, 3.0)     # mm (RAS axes order: R, A, S)
@@ -55,8 +56,7 @@ def _get_submodule(m: torch.nn.Module, dotted: str) -> torch.nn.Module:
 @lru_cache(maxsize=1)
 def load_model():
     """Load Merlin's image-only encoder once (eval, cuda, fp32 weights — autocast at call)."""
-    # Cache the 230MB checkpoint under /mnt/e so we don't fill the root disk.
-    os.environ.setdefault("HF_HOME", "/mnt/e/ctvlm/hf_cache")
+    os.environ.setdefault("HF_HOME", str(paths.hf_cache))
     from merlin import Merlin
     model = Merlin(ImageEmbedding=True).eval().cuda()
     return model

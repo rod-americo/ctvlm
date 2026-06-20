@@ -27,6 +27,7 @@ from __future__ import annotations
 import os
 import importlib.util
 from functools import lru_cache
+from pathlib import Path
 
 import numpy as np
 import torch
@@ -35,23 +36,62 @@ import torch.nn.functional as F
 from src.data import merlinplus as mp
 
 PILLAR0_REPO = os.environ.get("PILLAR0_REPO", "YalaLab/Pillar0-AbdomenCT")
-RAVE_WIN = os.environ.get(
-    "RAVE_WIN", "/mnt/e/ctvlm/rave/vision_engine/utils/windowing_utils.py")
+RAVE_WIN = os.environ.get("RAVE_WIN")
 SIZE = 384                       # model image_size (isotropic)
 MODALITY = "abdomen_ct"
 EMBED_DIM = 1152                 # concat of 3 scales x 384
 # rave get_available_windows("CT") order — 10 anatomical + minmax = 11 input channels.
 CT_WINDOWS = ["lung", "mediastinum", "abdomen", "liver", "bone", "brain",
               "subdural", "stroke", "temporal_bone", "soft_tissue", "minmax"]
+CT_WINDOW_SPECS = {
+    "lung": (-600.0, 1500.0),
+    "mediastinum": (40.0, 400.0),
+    "abdomen": (40.0, 400.0),
+    "liver": (60.0, 160.0),
+    "bone": (300.0, 1500.0),
+    "brain": (40.0, 80.0),
+    "subdural": (75.0, 215.0),
+    "stroke": (32.0, 8.0),
+    "temporal_bone": (600.0, 2800.0),
+    "soft_tissue": (40.0, 375.0),
+}
+
+
+def _window_channel(t: torch.Tensor, center: float, width: float) -> torch.Tensor:
+    lo = center - width / 2.0
+    hi = center + width / 2.0
+    return (t.clamp(lo, hi) - lo) / max(width, 1e-6)
+
+
+def _fallback_windowing(t: torch.Tensor, windows="all", modality="CT") -> torch.Tensor:
+    """Small local fallback for rad-vision-engine's CT windowing helper.
+
+    Exact RVE preprocessing is preferred when RAVE_WIN points at
+    windowing_utils.py. The fallback keeps Docker deployments self-contained.
+    """
+    if modality != "CT":
+        raise ValueError(f"unsupported modality for fallback windowing: {modality!r}")
+    names = CT_WINDOWS if windows == "all" else windows
+    channels = []
+    for name in names:
+        if name == "minmax":
+            lo, hi = -1000.0, 1000.0
+            channels.append((t.clamp(lo, hi) - lo) / (hi - lo))
+        else:
+            center, width = CT_WINDOW_SPECS[name]
+            channels.append(_window_channel(t, center, width))
+    return torch.stack(channels, dim=0).to(torch.float32)
 
 
 @lru_cache(maxsize=1)
 def _windowing():
     """rave's apply_windowing, loaded standalone (its package __init__ needs lz4/SITK)."""
-    spec = importlib.util.spec_from_file_location("rave_win", RAVE_WIN)
-    mod = importlib.util.module_from_spec(spec)
-    spec.loader.exec_module(mod)
-    return mod.apply_windowing
+    if RAVE_WIN and Path(RAVE_WIN).exists():
+        spec = importlib.util.spec_from_file_location("rave_win", RAVE_WIN)
+        mod = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(mod)
+        return mod.apply_windowing
+    return _fallback_windowing
 
 
 def _patch_tx5_tied_weights_compat() -> None:
@@ -84,9 +124,9 @@ def load_model():
     """
     _patch_tx5_tied_weights_compat()
     from transformers import AutoModel
-    token = None
+    token = os.environ.get("HF_TOKEN")
     tok_path = os.path.expanduser("~/.cache/huggingface/token")
-    if os.path.exists(tok_path):
+    if token is None and os.path.exists(tok_path):
         token = open(tok_path).read().strip()
     model = AutoModel.from_pretrained(PILLAR0_REPO, trust_remote_code=True, token=token)
     return model.eval().cuda()

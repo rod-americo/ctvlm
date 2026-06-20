@@ -10,6 +10,7 @@ need a CT array or organ mask read those directly (small enough to re-load).
 """
 from __future__ import annotations
 
+import os
 from pathlib import Path
 from typing import Any
 
@@ -18,10 +19,14 @@ import numpy as np
 
 from src.data import merlinplus as mp
 from src.data import roi_crops
+from src.config import paths
 
 # Heatmaps are produced by ct_files_server's lazy path or scripts/34; cached
-# at /mnt/e/ctvlm/heatmaps/<encoder>/<sid>/<finding>.nii.gz.
-HEAT_ROOT = Path("/mnt/e/ctvlm/heatmaps")
+# at $CTVLM_WORK_ROOT/heatmaps/<encoder>/<sid>/<finding>.nii.gz.
+def heat_root() -> Path:
+    raw = os.environ.get("CTVLM_WORK_ROOT")
+    root = Path(raw).expanduser() if raw else paths.work_root
+    return root / "heatmaps"
 
 
 # --------------------------------------------------------------------------- #
@@ -94,7 +99,7 @@ def liver_to_spleen_hu_ratio(sid: str) -> dict:
 # --------------------------------------------------------------------------- #
 
 def heatmap_path(sid: str, encoder: str, finding: str) -> Path:
-    return HEAT_ROOT / encoder / sid / f"{finding}.nii.gz"
+    return heat_root() / encoder / sid / f"{finding}.nii.gz"
 
 
 def cam_peak(sid: str, encoder: str, finding: str) -> dict:
@@ -103,7 +108,7 @@ def cam_peak(sid: str, encoder: str, finding: str) -> dict:
     if not p.exists():
         from src.explain import cam as _cam
         generated = _cam.ensure_concat_heatmap(sid, encoder, finding,
-                                                heat_root=HEAT_ROOT, verbose=True)
+                                                heat_root=heat_root(), verbose=True)
         if generated is None or not generated.exists():
             return {"valid": False, "reason": "heatmap not cached"}
         p = generated
@@ -131,7 +136,7 @@ def cam_connected_components(sid: str, encoder: str, finding: str,
     if not p.exists():
         from src.explain import cam as _cam
         generated = _cam.ensure_concat_heatmap(sid, encoder, finding,
-                                                heat_root=HEAT_ROOT, verbose=True)
+                                                heat_root=heat_root(), verbose=True)
         if generated is None or not generated.exists():
             return {"valid": False, "reason": "heatmap not cached"}
         p = generated

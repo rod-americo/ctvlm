@@ -22,6 +22,7 @@ classifiers = [
 # recommended for combined Merlin + Pillar-0 + Grad-CAM).
 dependencies = [
     "torch>=2.4,<3",                # CUDA 12.4 build; pin to your CUDA tag
+    "merlin-vlm",                   # provides the `merlin` Python module
     "transformers>=5.0,<6",         # 5.x required for Pillar-0 trust_remote_code
     "peft>=0.18",                   # optional — only for LoRA finetune scripts
     "nibabel>=5.2",
@@ -46,6 +47,11 @@ llm = [
 training = [
     "torch>=2.4,<3",
     "openpyxl",                     # reading the Merlin reports XLSX
+]
+
+viewer = [
+    "streamlit>=1.30",
+    "plotly>=5.18",
 ]
 
 # Tools, lint, tests.

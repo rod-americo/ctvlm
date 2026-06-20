@@ -13,7 +13,6 @@ from __future__ import annotations
 
 import argparse
 import json
-import os
 import re
 import sys
 import threading
@@ -42,11 +41,6 @@ HEATMAP_COLORMAPS = {"merlin": "hot", "pillar0": "winter"}
 HEAT_ROOT = paths.work_root / "heatmaps"
 HEAT_ROOT.mkdir(parents=True, exist_ok=True)
 
-# Lazy CAM model+probe cache. Loaded on first /heatmap request (~7s for each encoder),
-# then reused across requests for the lifetime of the server. Each cache entry is a
-# tuple (model, probe_path). Generation itself is per-(sid, finding).
-_cam_lock = threading.Lock()
-_cam_state: dict[str, tuple] = {}
 # Per-(encoder, sid, finding) in-flight lock so two browser requests for the same
 # overlay don't both spin up a forward pass.
 _inflight: dict[tuple[str, str, str], threading.Lock] = {}
@@ -57,29 +51,6 @@ def _safe_organ(s: str) -> str: return re.sub(r"[^A-Za-z0-9_]", "", s)
 def _safe_sid(s: str) -> str: return re.sub(r"[^A-Za-z0-9_-]", "", s)
 def _safe_finding(s: str) -> str: return re.sub(r"[^A-Za-z0-9_]", "", s)
 def _safe_encoder(s: str) -> str: return re.sub(r"[^a-z0-9]", "", s.lower())
-
-
-def _ensure_cam(encoder: str):
-    """Lazily load the encoder's model + probe path. Idempotent across requests."""
-    with _cam_lock:
-        if encoder in _cam_state:
-            return _cam_state[encoder]
-        os.environ.setdefault("HF_HOME", "/mnt/e/ctvlm/hf_cache")
-        if encoder == "merlin":
-            from src.embeddings import merlin as M
-            model = M.load_model()
-            probe = paths.checkpoints_dir / "merlin_cam_probe.pt"
-        elif encoder == "pillar0":
-            from src.embeddings import pillar0 as P
-            model = P.load_model()
-            probe = paths.checkpoints_dir / "pillar0_cam_probe.pt"
-        else:
-            raise ValueError(f"unknown encoder: {encoder!r}")
-        if not probe.exists():
-            raise FileNotFoundError(f"probe missing: {probe} (run scripts/33_train_cam_probes.py)")
-        _cam_state[encoder] = (model, probe)
-        sys.stderr.write(f"[cam] loaded {encoder} model + probe\n")
-        return _cam_state[encoder]
 
 
 def _heatmap_cache_path(encoder: str, sid: str, finding: str) -> Path:
@@ -98,33 +69,19 @@ def _generate_heatmap(encoder: str, sid: str, finding: str) -> Path:
     with lock:
         if cache.exists():
             return cache
-        model, probe = _ensure_cam(encoder)
         from src.explain import cam as CAM
         try:
-            if encoder == "merlin":
-                h, aff = CAM.merlin_cam(sid, finding, model, probe)
-            else:
-                h, aff = CAM.pillar0_cam(sid, finding, model, probe)
+            generated = CAM.ensure_concat_heatmap(
+                sid, encoder, finding, heat_root=HEAT_ROOT, verbose=True
+            )
+            if generated is None:
+                raise RuntimeError(f"failed to generate heatmap for {encoder}/{sid}/{finding}")
+            cache = generated
         finally:
             # Release retained activations + fragmented cache regardless of
             # success/failure so a failed run doesn't snowball into OOM.
             import torch
             torch.cuda.empty_cache()
-        # Per-encoder post-processing:
-        #   - body mask (HU > -500) on both — kills the air-space dots outside the patient
-        #   - Gaussian smoothing on both — breaks up the upsampled-token-grid edges
-        #   - take_abs only for Pillar-0 — its scale-0 slot of the L2-norm probe is often
-        #     net-negative so percentile-clipping the raw signal amplifies noise
-        #   - percentile_clip narrower for Pillar-0 (only the top ~10% are "hot");
-        #     wider for Merlin where the avgpool CAM is more honestly localised
-        if encoder == "pillar0":
-            CAM.save_heatmap(h, aff, cache, study_id=sid, take_abs=True,
-                             body_mask_hu=-500.0, smooth_sigma_vox=4.0,
-                             percentile_clip=(85.0, 99.5))
-        else:
-            CAM.save_heatmap(h, aff, cache, study_id=sid, take_abs=False,
-                             body_mask_hu=-500.0, smooth_sigma_vox=2.0,
-                             percentile_clip=(50.0, 99.0))
     return cache
 
 

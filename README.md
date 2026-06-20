@@ -172,6 +172,18 @@ python scripts/smoke_test.py
 # Expected: 4 steps PASS (imports, canonical map, probe checkpoint, encoder load)
 ```
 
+### Thor deployment
+
+For the `thor` host, use the dedicated Compose profile:
+
+```bash
+cp .env.example .env
+docker compose -f docker-compose.thor.yml up -d viewer
+```
+
+See [deploy/thor/README.md](deploy/thor/README.md) for the runbook, storage layout,
+smoke checks, and rollback steps.
+
 ---
 
 ## Datasets

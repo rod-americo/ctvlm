@@ -40,6 +40,36 @@ def _load_probe(probe_path: Path) -> dict:
     return _probe_cache[key]
 
 
+def _write_feature(path: Path, arr: np.ndarray) -> None:
+    """Persist encoder features in the same compact format used by the demo cache."""
+    path.parent.mkdir(parents=True, exist_ok=True)
+    np.save(path, np.asarray(arr, dtype=np.float16))
+
+
+def _ensure_merlin_feature(sid: str, path: Path) -> None:
+    """Run Merlin once and cache its 2048-d global embedding."""
+    from src.embeddings import merlin
+
+    model = merlin.load_model()
+    out = merlin.embed(sid, model)
+    if out is None:
+        raise FileNotFoundError(f"CT not found for Merlin feature extraction: {sid}")
+    global_emb, _layer3 = out
+    _write_feature(path, global_emb)
+
+
+def _ensure_pillar0_feature(sid: str, path: Path) -> None:
+    """Run Pillar-0 once and cache its 1152-d global embedding."""
+    from src.embeddings import pillar0
+
+    model = pillar0.load_model()
+    out = pillar0.embed(sid, model)
+    if out is None:
+        raise FileNotFoundError(f"CT not found for Pillar-0 feature extraction: {sid}")
+    global_emb, _global_mean, _grid = out
+    _write_feature(path, global_emb)
+
+
 def _load_feature(sid: str, source_dim: int) -> tuple[np.ndarray, str]:
     """Build the inference-time feature vector matching the probe's source_dim.
 
@@ -47,14 +77,14 @@ def _load_feature(sid: str, source_dim: int) -> tuple[np.ndarray, str]:
     """
     m_path = MERLIN_FEATURES / f"{sid}.npy"
     if not m_path.exists():
-        raise FileNotFoundError(f"no cached Merlin feature for {sid}")
+        _ensure_merlin_feature(sid, m_path)
     x_m = np.load(m_path).astype(np.float32)
     if source_dim == 2048:
         return x_m, "merlin"
     if source_dim == 3200:
         p_path = PILLAR0_FEATURES / f"{sid}.npy"
         if not p_path.exists():
-            raise FileNotFoundError(f"no cached Pillar-0 feature for {sid}")
+            _ensure_pillar0_feature(sid, p_path)
         x_p = np.load(p_path).astype(np.float32)
         x_m_l2 = x_m / max(float(np.linalg.norm(x_m)), 1e-6)
         x_p_l2 = x_p / max(float(np.linalg.norm(x_p)), 1e-6)
@@ -123,7 +153,8 @@ def generate_report(sid: str, *,
                     threshold: float = 0.5,
                     min_threshold: float = 0.20,
                     max_findings: int = 12,
-                    probe_path: Path = DEFAULT_PROBE,
+                    probe_path: Path | None = None,
+                    contrast_phase: str = "ce",
                     skip_llm: bool = False) -> FullReport:
     """The whole pipeline.
 
@@ -131,11 +162,16 @@ def generate_report(sid: str, *,
       threshold: predictions ≥ this become "positive" → router fires
       max_findings: cap on positives rendered (top-N by probability) — protects
         the LLM's 160-token budget on multi-pathology cases
+      contrast_phase: "ce" or "nc"; selects the matching calibration path
       skip_llm: if True, skip the model load + generate (useful for fast
         development iteration on tools/recipes/templates)
     """
     t0 = time.time()
-    probs, findings, encoder, per_finding_thr, per_finding_auc = predict(sid, probe_path)
+    if probe_path is None:
+        probe_path = DEFAULT_PROBE
+    probs, findings, encoder, per_finding_thr, per_finding_auc = predict(
+        sid, probe_path, contrast_phase=contrast_phase
+    )
 
     # Effective per-finding floor:
     #   1) Youden-J calibrated threshold (or `threshold` fallback). Computed on

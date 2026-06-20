@@ -1,15 +1,12 @@
-# ctvlm — docker-compose
+# ctvlm deployment profile for thor.
 #
-# First-run flow:
-#   1. cp .env.example .env  → fill in HF_TOKEN (one-time)
-#   2. docker compose up viewer
-#      → on first launch, container downloads ~1.5 GB of encoder weights from
-#        HuggingFace into ./hf_cache (persisted via the volume mount)
-#      → subsequent launches: instant
+# Default host layout:
+#   app checkout: this repository
+#   persistent data: /srv/ctvlm/{work,hf_cache}
 #
-# Services:
-#   viewer  Streamlit + NiiVue file server (http://localhost:8501)
-#   worker  GPU inference worker; stub broker integration in deploy/example_worker.py
+# Run from the repository root:
+#   cp .env.example .env
+#   docker compose -f docker-compose.thor.yml up -d viewer
 
 version: "3.9"
 
@@ -24,14 +21,15 @@ x-shared-env: &shared-env
   CTVLM_REPORTS_DIR: /opt/ctvlm/work/reports_out
   HF_HOME: /opt/ctvlm/hf_cache
   HF_HUB_DISABLE_TELEMETRY: "1"
-  HF_TOKEN: ${HF_TOKEN}                # ← pulled from your .env file
+  HF_TOKEN: ${HF_TOKEN}
   RAVE_WIN: ${RAVE_WIN:-}
   PYTHONUNBUFFERED: "1"
+  LOG_LEVEL: ${LOG_LEVEL:-INFO}
 
 x-shared-volumes: &shared-volumes
-  - ./work:/opt/ctvlm/work             # CT NIfTI, features, heatmaps, agent cache
-  - ./hf_cache:/opt/ctvlm/hf_cache     # encoder weights (persisted across restarts)
-  - ./checkpoints:/opt/ctvlm/checkpoints   # probe checkpoint (read-only)
+  - ${CTVLM_HOST_ROOT:-/srv/ctvlm}/work:/opt/ctvlm/work
+  - ${CTVLM_HOST_ROOT:-/srv/ctvlm}/hf_cache:/opt/ctvlm/hf_cache
+  - ./checkpoints:/opt/ctvlm/checkpoints:ro
 
 services:
   viewer:
@@ -40,14 +38,12 @@ services:
       target: viewer
     image: ctvlm-viewer:0.2.0
     ports:
-      - "8501:8501"     # Streamlit dashboard
-      - "8502:8502"     # File server (NIfTI / heatmap streaming + NiiVue viewer page)
+      - "${CTVLM_VIEWER_BIND:-127.0.0.1}:8501:8501"
+      - "${CTVLM_FILESERVER_BIND:-127.0.0.1}:8502:8502"
     volumes: *shared-volumes
     environment:
       <<: *shared-env
       CTVLM_UPLOAD_WORK: /opt/ctvlm/work
-    # Enable GPU if you want lazy Grad-CAM regeneration from inside the viewer.
-    # For browse-only (just looking at probabilities + cached heatmaps), CPU is fine.
     deploy:
       resources:
         reservations:
@@ -63,8 +59,9 @@ services:
     volumes: *shared-volumes
     environment:
       <<: *shared-env
-      # CTVLM_REDIS_URL: redis://broker:6379/0
-      # CTVLM_BROKER_QUEUE: ctvlm.jobs
+      CTVLM_MAX_FINDINGS: ${CTVLM_MAX_FINDINGS:-12}
+      CTVLM_REDIS_URL: ${CTVLM_REDIS_URL:-}
+      CTVLM_BROKER_QUEUE: ${CTVLM_BROKER_QUEUE:-ctvlm.jobs}
     deploy:
       resources:
         reservations:

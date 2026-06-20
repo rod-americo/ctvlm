@@ -5,6 +5,9 @@ Orthanc + GPU broker setup. Each file is **self-contained and runnable** — the
 contracts are correct; the broker SDK calls and Orthanc plugin loading need to
 be plumbed to your actual infrastructure.
 
+For the Docker Compose deployment profile used on `thor`, see
+[`deploy/thor/README.md`](thor/README.md).
+
 | file | role | docs |
 |---|---|---|
 | `example_orthanc_hook.py` | Orthanc Python plugin: study-completion → DICOM-tag extraction → broker publish | [docs/05_ORTHANC_INTEGRATION.md](../docs/05_ORTHANC_INTEGRATION.md) |

@@ -45,6 +45,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 
 from src.data import merlinplus as mp
+from src.config import paths
 
 
 # --------------------------------------------------------------------------- #
@@ -288,7 +289,7 @@ def pillar0_cam(study_id: str, finding: str, model,
 # Auto-generation via the production concat probe (Phase 2B)
 # --------------------------------------------------------------------------- #
 
-HEAT_ROOT = Path("/mnt/e/ctvlm/heatmaps")
+HEAT_ROOT = paths.work_root / "heatmaps"
 
 
 @__import__("functools").lru_cache(maxsize=1)

@@ -375,7 +375,7 @@ def app():
                                           if st.session_state.heat_finding in (["(none)"] + findings) else 0,
                                     help=("Per-finding CAM (linear probe × pre-pool feature map). "
                                           "Cold cache: ~25s; warm cache: instant. Heatmaps cached at "
-                                          "/mnt/e/ctvlm/heatmaps/<encoder>/<sid>/<finding>.nii.gz."))
+                                          "$CTVLM_WORK_ROOT/heatmaps/<encoder>/<sid>/<finding>.nii.gz."))
         st.session_state.heat_finding = heat_choice
         st.session_state.heat_encoders = st.multiselect(
             "Encoders", ["merlin", "pillar0"],

@@ -59,7 +59,8 @@ COPY configs/     ./configs/
 COPY scripts/     ./scripts/
 COPY tests/       ./tests/
 COPY checkpoints/ ./checkpoints/
-COPY README.md docs/ ./
+COPY README.md ./
+COPY docs/ ./docs/
 
 # Install deps now that source is present
 RUN python -m pip install -e .
@@ -99,7 +100,7 @@ CMD ["python", "-c", "print('ctvlm:0.2.0 — see README.md and docs/ for entry p
 FROM base AS viewer
 
 # Streamlit + plotting extras
-RUN python -m pip install streamlit>=1.30 plotly>=5.18
+RUN python -m pip install "streamlit>=1.30" "plotly>=5.18"
 
 # Viewer assets
 COPY viewer/ ./viewer/
@@ -141,7 +142,7 @@ CMD ["/opt/ctvlm/viewer/run.sh"]
 # ─────────────────────────────────────────────────────────────────────────────
 FROM base AS worker
 
-RUN python -m pip install prometheus-client>=0.20 || true
+RUN python -m pip install "prometheus-client>=0.20" || true
 
 COPY deploy/ ./deploy/
 

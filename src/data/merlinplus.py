@@ -17,6 +17,8 @@ Two facts every caller must respect — both handled here:
 
 On-disk layout (set by the Task 11 extraction):
     <merlin_plus_dir>/extracted/<study_id>/segmentations/<class>.nii.gz
+Production deployments may also use the flat TotalSegmentator-style layout:
+    <merlin_plus_dir>/<study_id>/<class>.nii.gz
 
 Public API:
     case_dir(study_id) -> Path
@@ -30,6 +32,7 @@ Public API:
 from __future__ import annotations
 
 from dataclasses import dataclass, field
+import os
 from pathlib import Path
 
 import numpy as np
@@ -37,12 +40,13 @@ import nibabel as nib
 
 from src.config import paths
 
-# Merlin CT volumes (read-only). Study `AC4213...` -> <merlin_data>/<id>.nii.gz
-_MERLIN_CT = paths.merlin_root / "merlinabdominalctdataset" / "merlin_data"
-
-
 def _extracted_root() -> Path:
-    return paths.merlin_plus_dir / "extracted"
+    return _env_path("CTVLM_MERLIN_PLUS_DIR", paths.merlin_plus_dir) / "extracted"
+
+
+def _env_path(name: str, fallback: Path) -> Path:
+    raw = os.environ.get(name)
+    return Path(raw).expanduser() if raw else fallback
 
 
 # ---------------------------------------------------------------------------
@@ -100,7 +104,11 @@ MAJOR_ORGANS = ["liver", "spleen", "kidney_left", "kidney_right", "pancreas"]
 
 def case_dir(study_id: str) -> Path:
     """Directory holding a case's per-class masks (may not exist)."""
-    return _extracted_root() / study_id / "segmentations"
+    merlin_plus_dir = _env_path("CTVLM_MERLIN_PLUS_DIR", paths.merlin_plus_dir)
+    extracted = _extracted_root() / study_id / "segmentations"
+    if extracted.is_dir():
+        return extracted
+    return merlin_plus_dir / study_id
 
 
 def has_case(study_id: str) -> bool:
@@ -150,7 +158,11 @@ def load_mask(study_id: str, cls: str) -> np.ndarray:
 
 def ct_path(study_id: str) -> Path:
     """Path to the matching Merlin CT (may not exist). Cheap — no file open."""
-    return _MERLIN_CT / f"{study_id}.nii.gz"
+    merlin_root = _env_path("CTVLM_MERLIN_ROOT", paths.merlin_root)
+    direct = merlin_root / f"{study_id}.nii.gz"
+    if direct.exists():
+        return direct
+    return merlin_root / "merlinabdominalctdataset" / "merlin_data" / f"{study_id}.nii.gz"
 
 
 def load_ct(study_id: str) -> nib.Nifti1Image | None:

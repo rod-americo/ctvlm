@@ -43,7 +43,7 @@ def _load(base: str = DEFAULT_BASE, lora_dir: Path = DEFAULT_LORA, device: str =
     with _model_lock:
         if "model" in _state:
             return _state["model"], _state["tok"]
-        os.environ.setdefault("HF_HOME", "/mnt/e/ctvlm/hf_cache")
+        os.environ.setdefault("HF_HOME", str(paths.hf_cache))
         from transformers import AutoModelForCausalLM, AutoTokenizer
         tok = AutoTokenizer.from_pretrained(base)
         if tok.pad_token is None:

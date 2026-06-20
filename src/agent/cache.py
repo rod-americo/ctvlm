@@ -1,8 +1,8 @@
 """Tiny on-disk cache for tool calls.
 
 Each tool result (JSON-serialisable) gets one file under
-`/mnt/e/ctvlm/agent_cache/<sid>/<tool>__<args_hash>.json`. Heatmap NIfTIs and
-mask arrays keep their existing NIfTI/.npz caches in `/mnt/e/ctvlm/heatmaps/`
+`$CTVLM_WORK_ROOT/agent_cache/<sid>/<tool>__<args_hash>.json`. Heatmap NIfTIs and
+mask arrays keep their existing NIfTI/.npz caches under `$CTVLM_WORK_ROOT/heatmaps/`
 and MerlinPlus; only path + summary stats land in the JSON here.
 
 Re-running the pipeline for the same case touches zero GPU.
@@ -11,12 +11,17 @@ from __future__ import annotations
 
 import hashlib
 import json
+import os
 from pathlib import Path
 from typing import Any, Callable
 
 from src.config import paths
 
-CACHE_ROOT = paths.work_root / "agent_cache"
+
+def cache_root() -> Path:
+    raw = os.environ.get("CTVLM_WORK_ROOT")
+    root = Path(raw).expanduser() if raw else paths.work_root
+    return root / "agent_cache"
 
 
 def _args_hash(args: dict[str, Any]) -> str:
@@ -27,7 +32,7 @@ def _args_hash(args: dict[str, Any]) -> str:
 
 def cache_path(sid: str, tool: str, args: dict[str, Any]) -> Path:
     h = _args_hash(args)
-    return CACHE_ROOT / sid / f"{tool}__{h}.json"
+    return cache_root() / sid / f"{tool}__{h}.json"
 
 
 def cached(sid: str, tool: str, args: dict[str, Any], fn: Callable[[], Any]) -> tuple[Any, bool]:
