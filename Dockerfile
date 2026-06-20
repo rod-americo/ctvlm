@@ -56,6 +56,7 @@ RUN python -m pip install --no-deps -e . || true
 COPY src/         ./src/
 COPY data/        ./data/
 COPY configs/     ./configs/
+COPY deploy/      ./deploy/
 COPY scripts/     ./scripts/
 COPY tests/       ./tests/
 COPY checkpoints/ ./checkpoints/
@@ -143,7 +144,5 @@ CMD ["/opt/ctvlm/viewer/run.sh"]
 FROM base AS worker
 
 RUN python -m pip install "prometheus-client>=0.20" || true
-
-COPY deploy/ ./deploy/
 
 CMD ["python", "deploy/example_worker.py"]
