@@ -3,7 +3,7 @@
 ![ctvlm banner](assets/banner.svg)
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
-[![Python](https://img.shields.io/badge/Python-3.11%2B-blue.svg)](pyproject.toml)
+[![Python](https://img.shields.io/badge/Python-3.10%2B-blue.svg)](pyproject.toml)
 [![CUDA](https://img.shields.io/badge/CUDA-12.4-green.svg)](Dockerfile)
 [![Docker](https://img.shields.io/badge/Docker-ready-2496ED?logo=docker)](docker-compose.yml)
 [![Research only](https://img.shields.io/badge/Research_only-NOT_FDA_cleared-red.svg)](#legal-disclaimer)

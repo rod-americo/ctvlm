@@ -38,12 +38,12 @@ ENV DEBIAN_FRONTEND=noninteractive \
     CTVLM_HF_CACHE=/opt/ctvlm/hf_cache
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
-        python3.11 python3.11-venv python3-pip \
+        python3.10 python3.10-venv python3-pip \
         git curl ca-certificates \
         dcm2niix \
         libgl1 libglib2.0-0 \
     && rm -rf /var/lib/apt/lists/* \
-    && ln -sf /usr/bin/python3.11 /usr/bin/python \
+    && ln -sf /usr/bin/python3.10 /usr/bin/python \
     && python -m pip install --upgrade pip wheel setuptools
 
 WORKDIR /opt/ctvlm

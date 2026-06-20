@@ -6,7 +6,7 @@ build-backend = "setuptools.build_meta"
 name = "ctvlm"
 version = "0.2.0"
 description = "CT body VLM — agentic radiology report generator over Merlin + Pillar-0 encoders"
-requires-python = ">=3.11"
+requires-python = ">=3.10"
 readme = "README.md"
 authors = [{ name = "ctvlm" }]
 license = { text = "Research use only — see docs/11_LIMITATIONS.md" }
@@ -73,7 +73,7 @@ include = ["src*"]
 
 [tool.ruff]
 line-length = 100
-target-version = "py311"
+target-version = "py310"
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
