@@ -66,3 +66,9 @@ If you need radiology-style natural prose, a post-render regex check that drops 
 - `scripts/41_merlin_rate_probe.py` — probe trainer; ship for re-calibration only
 - `scripts/43_pillar0_lora.py` — encoder LoRA experiment, didn't pay off at scale
 - `src/agent/render.render_prose` and `src/agent/render._load` — LLM call sites; never invoked in production
+
+## Future work notes
+
+- [CAC-DRS Chest CT probe](14_CACDRS_CHESTCT_PROBE.md) — research plan for training
+  a CAC-DRS / Agatston probe on gated calcium-score CT labels using Pillar-0 ChestCT,
+  then validating transfer to routine chest CT.
