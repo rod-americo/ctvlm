@@ -17,7 +17,9 @@ set -euo pipefail
 
 CTVLM_ROOT="/opt/ctvlm"
 HF_HOME="${HF_HOME:-$CTVLM_ROOT/hf_cache}"
+HF_HUB_CACHE="${HF_HUB_CACHE:-$HF_HOME/hub}"
 CKPT_DIR="${CTVLM_CHECKPOINTS_DIR:-$CTVLM_ROOT/checkpoints}"
+export HF_HOME HF_HUB_CACHE
 
 # ── 1. Probe checkpoint sanity ──────────────────────────────────────────── #
 if [ ! -f "$CKPT_DIR/concat_rate_probe.pt" ]; then
@@ -28,11 +30,11 @@ if [ ! -f "$CKPT_DIR/concat_rate_probe.pt" ]; then
 fi
 
 # ── 2. Encoder weights ──────────────────────────────────────────────────── #
-PILLAR0_REPO_DIR="$HF_HOME/hub/models--YalaLab--Pillar0-AbdomenCT"
+PILLAR0_REPO_DIR="$HF_HUB_CACHE/models--YalaLab--Pillar0-AbdomenCT"
 
-# Merlin's pip package stores its .pt inside the package itself; we symlinked
-# it at image build time → /opt/ctvlm/hf_cache/merlin_pkg/, so caching is
-# shared with the HF cache volume.
+# Merlin's pip package stores its .pt inside the package itself; the Docker
+# image symlinks that package directory to /opt/ctvlm/hf_cache/merlin_pkg/, so
+# caching is shared with the mounted HF cache volume.
 MERLIN_PKG_CKPT_DIR="$CTVLM_ROOT/hf_cache/merlin_pkg"
 
 need_download=0

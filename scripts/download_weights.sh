@@ -39,43 +39,31 @@ if [[ -z "${HF_TOKEN:-}" ]]; then
     exit 1
 fi
 
-mkdir -p "$HF_CACHE"
+HF_HUB_CACHE="${HF_HUB_CACHE:-$HF_CACHE/hub}"
+mkdir -p "$HF_CACHE" "$HF_HUB_CACHE"
 export HF_HOME="$HF_CACHE"
+export HF_HUB_CACHE
 
-echo "==> Downloading Merlin (stanfordmimi/Merlin) → $HF_CACHE"
+echo "==> Pre-loading Merlin via its Python package → $HF_CACHE/merlin_pkg"
 python -c "
 import os
-from huggingface_hub import snapshot_download
-snapshot_download(
-    repo_id='stanfordmimi/Merlin',
-    cache_dir=os.environ['HF_HOME'],
-    token=os.environ['HF_TOKEN'],
-)
-print('  Merlin OK')
+os.environ.setdefault('HF_HOME', '${HF_CACHE}')
+from merlin import Merlin
+_ = Merlin(ImageEmbedding=True)
+print('  Merlin pkg checkpoint cached')
 "
 
-echo "==> Downloading Pillar-0 (YalaLab/Pillar0-AbdomenCT) → $HF_CACHE"
+echo "==> Downloading Pillar-0 (YalaLab/Pillar0-AbdomenCT) → $HF_HUB_CACHE"
 python -c "
 import os
 from huggingface_hub import snapshot_download
 snapshot_download(
     repo_id='YalaLab/Pillar0-AbdomenCT',
-    cache_dir=os.environ['HF_HOME'],
+    cache_dir=os.environ['HF_HUB_CACHE'],
     token=os.environ['HF_TOKEN'],
 )
 print('  Pillar-0 OK')
 "
-
-# Merlin's pip package additionally caches a checkpoint inside its own dir on first
-# load. We can let that happen at runtime, or pre-trigger it offline:
-echo "==> Pre-loading Merlin via its Python package (first-load checkpoint pull)"
-python -c "
-import os
-os.environ.setdefault('HF_HOME', '${HF_CACHE}')
-from merlin import Merlin
-m = Merlin(ImageEmbedding=True)
-print('  Merlin pkg checkpoint cached')
-" 2>/dev/null || echo "  (skipped — install ctvlm + merlin package first; run again after pip install -e .)"
 
 echo
 echo "Done. Weights are in: $HF_CACHE"
